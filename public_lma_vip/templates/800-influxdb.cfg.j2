@@ -1,0 +1,11 @@
+listen influxdb
+  bind {{ lma_external_vip.ip }}:{{ influxdb_port }}
+  balance  roundrobin
+  http-check  expect status 204
+  mode  http
+  option  httpchk GET /ping HTTP/1.1
+  option  httplog
+  option  dontlog-normal
+{% for entry in groups.lma %}
+  server {{ hostvars[entry].ansible_hostname }} {{ lma_internal_vip.ip }}:8086  check
+{% endfor %}

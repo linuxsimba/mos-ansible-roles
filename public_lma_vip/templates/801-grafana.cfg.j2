@@ -1,0 +1,9 @@
+listen grafana
+  bind {{ lma_external_vip.ip }}:{{ grafana_port }}
+  balance  source
+  mode  http
+  option  httplog
+  option  dontlog-normal
+{% for entry in groups.lma %}
+  server {{ hostvars[entry].ansible_hostname }} {{ lma_internal_vip}}:8000  check
+{% endfor %}

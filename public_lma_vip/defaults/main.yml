@@ -1,0 +1,24 @@
+# Define the Internal LMA VIP for the cloud
+# This is obtained using the lma_vip_local_fact role
+# Example output
+# lma_vip: {
+#    ip: '192.168.1.1'
+#}
+lma_internal_vip: {}
+
+# Define the External LMA VIP for the cloud
+# This is automatically derived from the public_lma_vip role
+
+lma_internal_external_vip: {}
+# LMA Real server information for the /etc/haproxy/conf.d files.
+# lma_real_servers:
+#   - { hostname: node-11  ip: 192.168.0.11 }
+#   - { hostname: node-13  ip: 192.168.0.21 }
+lma_real_servers: {}
+
+
+# Configure default ports used for the external IP address
+grafana_port: 8001
+kibana_port: 8002
+influxdb_port: 8086
+elasticsearch_port: 9200

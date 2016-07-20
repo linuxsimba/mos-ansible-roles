@@ -1,0 +1,5 @@
+---
+- hosts: controller
+  roles:
+    - { role: public_lma_vip }
+

@@ -1,0 +1,7 @@
+[controller]
+control1 ansible_host=10.20.0.13
+control2 ansible_host=10.20.0.34
+control3 ansible_host=10.20.0.33
+
+[lma]
+lma1 ansible_host=10.20.0.36 ansible_hostname=node-40

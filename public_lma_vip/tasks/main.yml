@@ -1,0 +1,2 @@
+- include: lma_vip.yml
+  tags: ['lma_external_vip']
