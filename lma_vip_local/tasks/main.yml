@@ -16,7 +16,7 @@
   copy: src=lma_vip.py dest=/etc/ansible/facts.d/lma_vip.fact mode=0755 owner=root
   changed_when: 'contents.rc > 0'
 
-- name: set internal VIP fact
+- name: Get local facts
   setup: filter=ansible_local
   register: local_fact
 

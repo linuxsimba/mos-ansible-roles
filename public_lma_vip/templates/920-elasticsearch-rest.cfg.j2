@@ -1,0 +1,11 @@
+listen elasticsearch-rest
+  bind {{ lma_external_vip.ip }}:9200
+  balance  roundrobin
+  mode  http
+  option  httplog
+  option  http-keep-alive
+  option  prefer-last-server
+  option  dontlog-normal
+{%  for entry in groups.lma %}
+  server {{ hostvars[entry].ansible_hostname }} {{ hostvars[entry].internal_ip  }}:9200 check inter 10s fastinter 2s downinter 3s rise 3 fall 3
+{% endfor %}

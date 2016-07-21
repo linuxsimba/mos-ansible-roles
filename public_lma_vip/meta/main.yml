@@ -1,4 +1,0 @@
----
-dependencies:
-  - role: lma_vip_local
-    delegate_to: "{{hostvars[groups.lma[0]].ansible_host}}"

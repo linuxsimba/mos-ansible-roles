@@ -4,7 +4,8 @@
 # lma_vip: {
 #    ip: '192.168.1.1'
 #}
-lma_internal_vip: {}
+lma_internal_vip:
+  ip: '192.168.0.13'
 
 # Define the External LMA VIP for the cloud
 # This is automatically derived from the public_lma_vip role

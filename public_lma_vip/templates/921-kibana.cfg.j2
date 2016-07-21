@@ -1,5 +1,5 @@
 listen kibana
-  bind {{ lma_external_ip.ip }}:{{ kibana_port }}
+  bind {{ lma_external_vip.ip }}:{{ kibana_port }}
   balance  roundrobin
   mode  http
   option  httplog
@@ -7,5 +7,5 @@ listen kibana
   option  prefer-last-server
   option  dontlog-normal
 {% for entry in groups.lma %}
-  server {{ hostvars[entry].ansible_hostname }} {{ lma_internal_vip}}:80  check inter 10s fastinter 2s downinter 3s rise 3 fall 3
+  server {{ hostvars[entry].ansible_hostname }} {{ hostvars[entry].internal_ip }}:80  check inter 10s fastinter 2s downinter 3s rise 3 fall 3
 {% endfor %}

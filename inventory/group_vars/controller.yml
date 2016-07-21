@@ -1,3 +1,8 @@
 lma_real_servers:
   - { hostname: node-40 , ip: 192.168.0.13 }
 
+# TODO dynamically get this from the LMA host
+lma_internal_elasticsearch_vip: '192.168.0.5'
+lma_internal_influxdb_vip: '192.168.0.3'
+
+

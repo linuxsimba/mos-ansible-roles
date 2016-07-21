@@ -5,5 +5,5 @@ listen grafana
   option  httplog
   option  dontlog-normal
 {% for entry in groups.lma %}
-  server {{ hostvars[entry].ansible_hostname }} {{ lma_internal_vip}}:8000  check
+  server {{ hostvars[entry].ansible_hostname }} {{ hostvars[entry].internal_ip }}:8000  check
 {% endfor %}

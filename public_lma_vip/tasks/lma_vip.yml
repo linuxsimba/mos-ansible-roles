@@ -1,12 +1,24 @@
-- name: confirm that lma_vip variable is not empty
-  fail: msg=" lma_vip var is empty. it is defined in the lma_vip_local_fact role. make sure to make this a dependency of this role and delegate that role an lma host"
-  when: lma_vip == {}
+- name: create ansible fact directory
+  file: path=/etc/ansible/facts.d state=directory
+
+- name: add ansible local fact lma vip file
+  copy: src=external_vip.py dest=/etc/ansible/facts.d/external_vip.fact mode=0755 owner=root
+
+- name: Get local facts
+  setup: filter=ansible_local
+  register: local_fact
+
+- name: set lma_external_vip fact
+  set_fact: lma_external_vip="{{local_fact.ansible_facts.ansible_local.external_vip}}"
 
 - name: create influxdb haproxy cfg on the controllers
   template:  src=800-influxdb.cfg.j2 dest=/etc/haproxy/conf.d/800-influxdb.cfg
 
 - name: create grafana haproxy cfg on the controllers
   template:  src=801-grafana.cfg.j2 dest=/etc/haproxy/conf.d/801-grafana.cfg
+
+- name: create elasticsearch haproxy cfg on the controllers
+  template:  src=920-elasticsearch-rest.cfg.j2 dest=/etc/haproxy/conf.d/920-elasticsearch-rest.cfg
 
 - name: create kibana haproxy cfg on the controllers
   template:  src=921-kibana.cfg.j2 dest=/etc/haproxy/conf.d/921-kibana.cfg
