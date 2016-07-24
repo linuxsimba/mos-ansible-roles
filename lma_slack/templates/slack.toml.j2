@@ -1,0 +1,18 @@
+[SlackEncoder]
+type = "SandboxEncoder"
+filename = "/usr/share/lma_collector/encoders/slack.lua"
+
+[SlackOutput]
+type = "HttpOutput"
+message_matcher = "Type == '{{ metric_to_monitor }}'"
+# Replace the URL by the proper webhook URL
+address = "{{ slack_api_url }}"
+encoder = "SlackEncoder"
+method = "POST"
+
+# Buffering is required otherwise Heka might get stuck if the Slack API becomes slow or unreachable
+use_buffering = true
+[SlackOutput.buffering]
+max_buffer_size = 2097152
+max_file_size = 1048576
+full_action = "drop"

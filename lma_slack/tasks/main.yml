@@ -1,0 +1,3 @@
+- include: lma_slack.yml
+  tags: ['lma_slack']
+

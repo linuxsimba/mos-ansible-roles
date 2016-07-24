@@ -1,7 +1,0 @@
-# IP or hostname from the 'pcs resource show infrastructure_alerting_mgmt_vip' output on a LMA cluster node
-# lma_internal_elasticsearch_vip: ''
-#
-# IP or hostname from the 'pcs resource show vip__influxdb' output on a LMA cluster node
-# lma_internal_influxdb_vip: ''
-
-

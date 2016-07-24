@@ -1,0 +1,13 @@
+# Define the External LMA VIP for the cloud
+# This is automatically derived from the public_lma_vip role
+# TODO get this from the controllers using ansible local facts
+# Get this from the "pcs resource show vip__public" command from
+# the "ip=" variable
+lma_internal_external_vip: {}
+
+
+# Configure default ports used for the external IP address
+grafana_port: 8001
+kibana_port: 8002
+influxdb_port: 8086
+elasticsearch_port: 9200

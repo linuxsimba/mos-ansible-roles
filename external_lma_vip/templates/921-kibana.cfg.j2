@@ -7,5 +7,5 @@ listen kibana
   option  prefer-last-server
   option  dontlog-normal
 {% for entry in groups.lma %}
-  server {{ hostvars[entry].ansible_hostname }} {{ hostvars[entry].internal_ip }}:80  check inter 10s fastinter 2s downinter 3s rise 3 fall 3
+  server {{ hostvars[entry].ansible_hostname }} {{ hostvars[entry].openstack_mgmt_ip }}:80  check inter 10s fastinter 2s downinter 3s rise 3 fall 3
 {% endfor %}

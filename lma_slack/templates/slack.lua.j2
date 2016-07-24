@@ -1,0 +1,52 @@
+require 'string'
+
+local lma = require 'lma_utils'
+local consts = require 'gse_constants'
+
+-- Adapt with your own settings
+local slack_alert = {
+    icon_emoji="{{ icon_emoji }}",
+    username="{{ slack_username }}",
+    channel="{{ slack_channel_name }}"
+}
+
+local statuses = {}
+
+function process_message()
+    local previous
+    local cluster = afd.get_entity_name('cluster_name')
+    local msg_type = read_message("Type")
+    local status = afd.get_status()
+
+    if not cluster or not status then
+        return -1
+    end
+    local key = string.format('%s.%s', msg_type, cluster)
+    if not statuses[key] then
+        statuses[key] = {}
+    end
+    previous = statuses[key]
+
+    local text
+    if not previous.status and status == consts.OKAY then
+        -- don't send a email when we detect a new cluster which is OKAY
+        return 0
+    elseif not previous.status then
+text = string.format('%s status is %s',
+                              cluster,
+                              consts.status_label(status))
+    elseif status ~= previous.status then
+text = string.format('%s status %s -> %s',
+                              cluster,
+                              consts.status_label(previous.status),
+                              consts.status_label(status))
+    else
+        -- nothing has changed since the last message
+        return 0
+    end
+
+    previous.status = status
+    slack_alert['text'] = text
+
+    return lma.safe_inject_payload('json', 'Slack', lma.safe_json_encode(slack_alert))
+end
