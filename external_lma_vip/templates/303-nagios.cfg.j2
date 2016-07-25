@@ -1,0 +1,8 @@
+listen nagios
+  bind {{ ansible_local.external_vip.ip }}:{{ nagios_port }}
+  balance  source
+  mode  http
+  option  httplog
+  option  dontlog-normal
+  server {{ hostvars[groups.lma[0]].ansible_hostname }} {{ internal_lma_vip }}:8001  check
+

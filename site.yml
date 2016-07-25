@@ -1,5 +1,5 @@
 ---
 - hosts: controller
   roles:
-    - { role: public_lma_vip }
+    - { role: external_lma_vip }
     - { role: lma_slack }

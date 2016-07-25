@@ -1,3 +1,7 @@
+- name: check if internal_lma_vip is defined
+  fail: msg="internal_lma_vip is not defined. check it on a LMA device crm resource show "
+  when: internal_lma_vip == ""
+
 - name: create ansible fact directory
   file: path=/etc/ansible/facts.d state=directory
 
@@ -5,11 +9,19 @@
   copy: src=external_vip.py dest=/etc/ansible/facts.d/external_vip.fact mode=0755 owner=root
 
 - name: Get local facts
-  setup: filter=ansible_local
-  register: local_fact
+  setup: filter="ansible_local*"
 
-- name: set lma_external_vip fact
-  set_fact: lma_external_vip="{{local_fact.ansible_facts.ansible_local.external_vip}}"
+- name: get the br_mgmt ip for all lma hosts
+  setup: filter="ansible_br_mgmt*"
+  delegate_to: "{{item}}"
+  with_items: " {{ groups['lma'] }}"
+  delegate_facts: true
+
+- name: get the hostname for all lma hosts
+  setup: filter="ansible_hostname*"
+  delegate_to: "{{item}}"
+  with_items: " {{ groups['lma'] }}"
+  delegate_facts: true
 
 - name: create influxdb haproxy cfg on the controllers
   template:  src=800-influxdb.cfg.j2 dest=/etc/haproxy/conf.d/800-influxdb.cfg
@@ -22,3 +34,6 @@
 
 - name: create kibana haproxy cfg on the controllers
   template:  src=921-kibana.cfg.j2 dest=/etc/haproxy/conf.d/921-kibana.cfg
+
+- name: create nagios haproxy cfg on the controllers
+  template:  src=303-nagios.cfg.j2 dest=/etc/haproxy/conf.d/303-nagios.cfg

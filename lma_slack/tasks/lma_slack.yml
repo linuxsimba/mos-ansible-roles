@@ -1,10 +1,10 @@
 - name: fail if stack_api_url is not defined
   fail: msg="role variable slack_api_url is empty. Go to https://api.slack.com/incoming-webhooks to get one"
-  when: stack_api_url == ""
+  when: slack_api_url == ""
 
-- name:  fail if the slack channel is not defined
-  fail: msg= "required role variable slack_username is empty"
-  when: slack_username == ""
+- name:  fail if the slack channel name is not defined
+  fail: msg="required role variable slack_username is empty"
+  when: slack_channel_name == ""
 
 - name: copy slack heka lua file to /usr/share/lma_collector/encoders
   template: src=slack.lua.j2 dest=/usr/share/lma_collector/encoders/slack.lua

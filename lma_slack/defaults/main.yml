@@ -1,7 +1,7 @@
 # Select the stacklight metric to monitor
 # TODO: Explain where to find these metrics
-# Default: "heka.sandbox.gse_metric". Reports cluster status
-metric_to_monitor: "heak.sandbox.gse_metric"
+# Default: "heka.sandbox.gse_cluster_metric". Reports cluster status
+metric_to_monitor: "heka.sandbox.gse_cluster_metric"
 
 # Slack API URL
 # Go to https://api.slack.com/incoming-webhooks to get one

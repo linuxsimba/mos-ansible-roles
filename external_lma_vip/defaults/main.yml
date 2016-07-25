@@ -11,3 +11,4 @@ grafana_port: 8001
 kibana_port: 8002
 influxdb_port: 8086
 elasticsearch_port: 9200
+nagios_port: 8005

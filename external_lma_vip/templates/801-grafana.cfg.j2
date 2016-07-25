@@ -1,9 +1,9 @@
 listen grafana
-  bind {{ lma_external_vip.ip }}:{{ grafana_port }}
+  bind {{ ansible_local.external_vip.ip }}:{{ grafana_port }}
   balance  source
   mode  http
   option  httplog
   option  dontlog-normal
 {% for entry in groups.lma %}
-  server {{ hostvars[entry].ansible_hostname }} {{ hostvars[entry].openstack_mgmt_ip }}:8000  check
+  server {{ hostvars[entry].ansible_hostname }} {{ hostvars[entry].ansible_br_mgmt.ipv4.address }}:8000 check
 {% endfor %}
