@@ -1,13 +1,49 @@
-- name: fail if stack_api_url is not defined
-  fail: msg="role variable slack_api_url is empty. Go to https://api.slack.com/incoming-webhooks to get one"
-  when: slack_api_url == ""
+# vi: set ft=ansible :
+- name: fail if stack_team_url is not defined
+  fail: msg="role variable slack_team_url is empty. Go to Nagios Integration at https://miracloud.slack.com/apps"
+  when: slack_team_url == ""
 
-- name: delete slack.lua and slack.toml
-  file: path="{{ item }}" state=absent
+- name: fail if stack_token is not defined
+  fail: msg="role variable slack_token is empty. Go to Nagios Integration at https://miracloud.slack.com/apps"
+  when: slack_token == ""
+
+- name: fail if slack_channel_name is not defined
+  fail: msg="role variable slack_channel_name is empty. This is the channel the alerts are sent to"
+  when: slack_channel_name == ""
+
+- name: install necessary perl modules
+  apt:  name="{{item}}"
   with_items:
-    - "/usr/share/lma_collector/encoders/slack.lua"
-    - "/etc/lma_collector/slack.toml"
+    - libwww-perl
+    - libcrypt-ssleay-perl
 
+
+- name: copy modified slack plugin to local/bin/slack_nagios.pl
+  template:
+    src: slack_nagios.pl.j2
+    dest: /usr/local/bin/slack_nagios.pl
+    mode: 0750
+    group: nagios
+    owner: root
+  notify: restart nagios
+
+- name: copy nagios slack config file to config directory
+  template:
+    src: slack_nagios.cfg.j2
+    dest: /etc/nagios3/conf.d/slack_nagios.cfg
+    mode: 0640
+    group: nagios
+    owner: root
+  notify: restart nagios
+
+- name: add slack user to slack contact group
+  copy:
+    src: lma_contactgroups.cfg
+    dest: /etc/nagios3/conf.d/lma_contactgroups.cfg
+    mode: 0640
+    group: nagios
+    owner: root
+  notify: restart nagios
 #- name:  fail if the slack channel name is not defined
 #  fail: msg="required role variable slack_username is empty"
 #  when: slack_channel_name == ""

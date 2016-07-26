@@ -1,3 +1,7 @@
+- name: restart nagios
+  command: crm resource restart nagios3
+  ignore_errors: yes
+
 - name: restart lma_collector
-  command:  crm restart lma_collector
-  delegate_to: groups.controller[0].ansible_host
+  command:  crm resource restart lma_collector
+  ignore_errors: yes

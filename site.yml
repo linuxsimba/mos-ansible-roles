@@ -2,4 +2,7 @@
 - hosts: controller
   roles:
     - { role: external_lma_vip }
+
+- hosts: lma
+  roles:
     - { role: lma_slack }

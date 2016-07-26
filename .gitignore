@@ -1,3 +1,4 @@
+inventory/hosts
 slack.json
 *.swp
 Session.vim
