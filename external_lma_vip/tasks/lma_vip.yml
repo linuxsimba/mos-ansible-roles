@@ -25,15 +25,31 @@
 
 - name: create influxdb haproxy cfg on the controllers
   template:  src=800-influxdb.cfg.j2 dest=/etc/haproxy/conf.d/800-influxdb.cfg
+  notify:
+    - restart crm haproxy
+    - restart crm lma_collector
 
 - name: create grafana haproxy cfg on the controllers
   template:  src=801-grafana.cfg.j2 dest=/etc/haproxy/conf.d/801-grafana.cfg
+  notify:
+    - restart crm haproxy
+    - restart crm lma_collector
 
 - name: create elasticsearch haproxy cfg on the controllers
   template:  src=920-elasticsearch-rest.cfg.j2 dest=/etc/haproxy/conf.d/920-elasticsearch-rest.cfg
+  notify:
+    - restart crm haproxy
+    - restart crm lma_collector
+
 
 - name: create kibana haproxy cfg on the controllers
   template:  src=921-kibana.cfg.j2 dest=/etc/haproxy/conf.d/921-kibana.cfg
+  notify:
+    - restart crm haproxy
+    - restart crm lma_collector
 
 - name: create nagios haproxy cfg on the controllers
   template:  src=303-nagios.cfg.j2 dest=/etc/haproxy/conf.d/303-nagios.cfg
+  notify:
+    - restart crm haproxy
+    - restart crm lma_collector

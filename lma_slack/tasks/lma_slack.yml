@@ -2,12 +2,18 @@
   fail: msg="role variable slack_api_url is empty. Go to https://api.slack.com/incoming-webhooks to get one"
   when: slack_api_url == ""
 
-- name:  fail if the slack channel name is not defined
-  fail: msg="required role variable slack_username is empty"
-  when: slack_channel_name == ""
+- name: delete slack.lua and slack.toml
+  file: path="{{ item }}" state=absent
+  with_items:
+    - "/usr/share/lma_collector/encoders/slack.lua"
+    - "/etc/lma_collector/slack.toml"
 
-- name: copy slack heka lua file to /usr/share/lma_collector/encoders
-  template: src=slack.lua.j2 dest=/usr/share/lma_collector/encoders/slack.lua
-
-- name: copy slack TOML file to /etc/lma_collector
-  template: src=slack.toml.j2  dest=/etc/lma_collector/slack.toml
+#- name:  fail if the slack channel name is not defined
+#  fail: msg="required role variable slack_username is empty"
+#  when: slack_channel_name == ""
+#
+#- name: copy slack heka lua file to /usr/share/lma_collector/encoders
+#  template: src=slack.lua.j2 dest=/usr/share/lma_collector/encoders/slack.lua
+#
+#- name: copy slack TOML file to /etc/lma_collector
+#  template: src=slack.toml.j2  dest=/etc/lma_collector/slack.toml
