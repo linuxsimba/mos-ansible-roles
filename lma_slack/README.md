@@ -1,6 +1,6 @@
 # lma_slack
 
-Update Stacklight configuration on all controllers to support
+Update Stacklight configuration on all LMA nodes to support
 sending of key Stacklight metrics to Slack.
 
 By default it sends the cluster status changes for each of the key service
@@ -21,7 +21,8 @@ See defaults/main.yml
 - hosts: controller
   roles:
     - { role: lma_stack,
-          slack_api_url: "http://slack.com/12123/123123/13123123",
+          slack_token: "13123123",
+          slack_api_url: "linuxsimba.slack.com",
           slack_channel_name: "mos-alert" }
 ```
 
@@ -36,5 +37,3 @@ MIT
 
 ## Author Information
 Stanley Karunditu
-
-Derived from an article published by the Stacklight Team.

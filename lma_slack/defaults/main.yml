@@ -1,23 +1,11 @@
-# Select the stacklight metric to monitor
-# TODO: Explain where to find these metrics
-# Default: "heka.sandbox.gse_cluster_metric". Reports cluster status
-metric_to_monitor: "heka.sandbox.gse_cluster_metric"
-
 # Slack API URL
 # Go to https://api.slack.com/incoming-webhooks to get one
 slack_api_url: ""
 
-# Slack username
-# Example: slack_username: stacklight-alert
-# Default: 'Stacklight'
-slack_username: "Stacklight"
+# Slack API Token.
+slack_token: ""
 
 # name of the slack channel to write to.
 # Example:
 # slack_channel_name: "alerts"
 slack_channel_name: ""
-
-# Icon to show in the alert
-# A good list is found at http://www.webpagefx.com/tools/emoji-cheat-sheet/
-# Default is the :bomb:
-icon_emoji: ":bomb:"
