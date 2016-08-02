@@ -13,25 +13,31 @@ environment is it recommended to put a management station on the Mgmt network.
 
 ## Role Variables
 
-These variables are defined in defaults/main.yml (provide link)
+These variables are defined in
+[defaults/main.yml](https://github.com/linuxsimba/mos-ansible-roles/blob/master/external_lma_vip/defaults/main.yml)
 
 ## Inventory Variables
 
-* define an ``openstack_mgmt_ip`` variable on each Stacklight/LMA host. This is the Openstack mgmt IP of the controller.
-This IP is where the various LMA servers bind to on the LMA server
+Define a host group called `lma`. This is used by the ansible delegation script
+to obtain the VIP used by Nagios and the `br_mgmt` interface from each
+Stacklight/LMA node.
 
-
-* Ensure that all stacklight controllers are placed in a ``[lma]`` group.
-
-* Ensure that each inventory hostvar variables has the `ansible_hostname` and `ansible_host`
-
-> TODO: Use local ansible facts to automatically generate this data. For now user
-has to manual collect this data.
-
-Example:
+Example Inventory File:
 
 ```
-[lma]
+[controller]
+control1 ansible_host=10.1.1.1
+control2 ansible_host=10.1.1.2
+control3 ansible_host=10.1.1.3
 
-lma1 ansible_host='10.1.1.1' ansible_hostname='node-22' openstack_mgmt_ip='192.168.1.1'
+[lma]
+lma1 ansible_host=10.1.1.4
+lma2 ansible_host=10.1.1.5
+lma3 ansible_host=10.1.1.6
+```
+
+## Example
+
+```
+ansible -i ansible.hosts -m external_lma_vip controller
 ```

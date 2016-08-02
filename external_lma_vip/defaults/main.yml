@@ -1,5 +1,5 @@
 
-# Configure default ports used for the external IP address
+# Default ports used for the external endpoint access.
 grafana_port: 8001
 kibana_port: 8002
 influxdb_port: 8086
