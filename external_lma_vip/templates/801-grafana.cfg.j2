@@ -1,5 +1,5 @@
 listen grafana
-  bind {{ ansible_local.external_vip.ip }}:{{ grafana_port }}
+  bind {{ ansible_local.vip_public.ip }}:{{ grafana_port }}
   balance  source
   mode  http
   option  httplog

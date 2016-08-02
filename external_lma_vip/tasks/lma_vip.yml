@@ -1,55 +1,74 @@
-- name: check if internal_lma_vip is defined
-  fail: msg="internal_lma_vip is not defined. check it on a LMA device crm resource show "
-  when: internal_lma_vip == ""
-
-- name: create ansible fact directory
+- name: create ansible fact directory on the controller nodes
   file: path=/etc/ansible/facts.d state=directory
 
-- name: add ansible local fact lma vip file
-  copy: src=external_vip.py dest=/etc/ansible/facts.d/external_vip.fact mode=0755 owner=root
+- name: set "vip" variable to be vip__public variable
+  set_fact: vip="vip__public"
 
-- name: Get local facts
+- name: install fact checking script that gets the vip__public IP for the openstack cluster.
+  template: src=vip_ip_fact.py.j2 dest=/etc/ansible/facts.d/vip_public.fact mode=0755 owner=root
+
+- name: Get the vip__public IP for the openstack cluster.
   setup: filter="ansible_local*"
 
-- name: get the br_mgmt ip for all lma hosts
-  setup: filter="ansible_br_mgmt*"
+- name: set "vip" variable to be vip__infrastructure_alerting_mgmt_vip
+  set_fact: vip="vip__infrastructure_alerting_mgmt_vip"
+
+
+- name: create ansible fact directory on the controller nodes
+  file: path=/etc/ansible/facts.d state=directory
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['lma'] }}"
+
+- name: install fact checking script that gets the vip__infrastructure_alerting_mgmt_vip from the LMA/Stacklight Nodes
+  template: src=vip_ip_fact.py.j2 dest=/etc/ansible/facts.d/vip_alerting_mgmt.fact mode=0755 owner=root
   delegate_to: "{{item}}"
-  with_items: " {{ groups['lma'] }}"
+  with_items: "{{ groups['lma'] }}"
+
+- name: Get the vip__public IP for the openstack cluster.
+  setup: filter="ansible_local*"
+  delegate_to: "{{ groups['lma'][0] }}"
   delegate_facts: true
 
-- name: get the hostname for all lma hosts
+- name: get the br_mgmt ip for all stacklight/lma nodes
+  setup: filter="ansible_br_mgmt*"
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['lma'] }}"
+  delegate_facts: true
+
+- name: get the hostname for all stacklight/lma nodes
   setup: filter="ansible_hostname*"
-  delegate_to: "{{item}}"
-  with_items: " {{ groups['lma'] }}"
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['lma'] }}"
   delegate_facts: true
 
 - name: create influxdb haproxy cfg on the controllers
   template:  src=800-influxdb.cfg.j2 dest=/etc/haproxy/conf.d/800-influxdb.cfg
-  notify:
-    - restart crm haproxy
-    - restart crm lma_collector
+  #notify:
+  #  - restart crm haproxy
+  #  - restart crm lma_collector
+
 
 - name: create grafana haproxy cfg on the controllers
   template:  src=801-grafana.cfg.j2 dest=/etc/haproxy/conf.d/801-grafana.cfg
-  notify:
-    - restart crm haproxy
-    - restart crm lma_collector
+#  notify:
+#    - restart crm haproxy
+#    - restart crm lma_collector
 
 - name: create elasticsearch haproxy cfg on the controllers
   template:  src=920-elasticsearch-rest.cfg.j2 dest=/etc/haproxy/conf.d/920-elasticsearch-rest.cfg
-  notify:
-    - restart crm haproxy
-    - restart crm lma_collector
+#  notify:
+#    - restart crm haproxy
+#    - restart crm lma_collector
 
 
 - name: create kibana haproxy cfg on the controllers
   template:  src=921-kibana.cfg.j2 dest=/etc/haproxy/conf.d/921-kibana.cfg
-  notify:
-    - restart crm haproxy
-    - restart crm lma_collector
+#  notify:
+#    - restart crm haproxy
+#    - restart crm lma_collector
 
 - name: create nagios haproxy cfg on the controllers
   template:  src=303-nagios.cfg.j2 dest=/etc/haproxy/conf.d/303-nagios.cfg
-  notify:
-    - restart crm haproxy
-    - restart crm lma_collector
+#  notify:
+#    - restart crm haproxy
+#    - restart crm lma_collector

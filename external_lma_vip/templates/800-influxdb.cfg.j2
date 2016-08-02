@@ -1,5 +1,5 @@
 listen influxdb
-  bind {{ ansible_local.external_vip.ip }}:{{ influxdb_port }}
+  bind {{ ansible_local.vip_public.ip }}:{{ influxdb_port }}
   balance  roundrobin
   http-check  expect status 204
   mode  http

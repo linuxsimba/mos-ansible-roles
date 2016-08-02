@@ -1,5 +1,5 @@
 listen kibana
-  bind {{ ansible_local.external_vip.ip }}:{{ kibana_port }}
+  bind {{ ansible_local.vip_public.ip }}:{{ kibana_port }}
   balance  roundrobin
   mode  http
   option  httplog

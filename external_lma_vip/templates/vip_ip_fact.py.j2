@@ -1,13 +1,14 @@
 #!/usr/bin/python
 
-# Returns the external LMA alerting VIP IP address as an Ansible Fact
+# Returns the IP address of the resource specified by the "vip" variable
+# Works with MOS8 and MOS9.
 # Author: Stanley Karunditu
 # LICENSE: MIT
 
 import subprocess
 import json
 
-cmd = 'pcs resource show vip__public'.split()
+cmd = 'pcs resource show {{ vip }}'.split()
 output = subprocess.check_output(cmd)
 entries = output.split('\n')
 fact = {'ip': ''}
