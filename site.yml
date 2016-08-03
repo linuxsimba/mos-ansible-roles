@@ -6,3 +6,7 @@
 - hosts: lma
   roles:
     - { role: lma_slack }
+
+- hosts: compute
+  roles:
+    - { role: compute_patches }
