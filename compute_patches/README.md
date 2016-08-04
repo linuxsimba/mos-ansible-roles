@@ -11,9 +11,14 @@ Patches to apply to the MOS setup that are not included in the Maintenance Updat
 ## Role Variables
 None
 
-## Inventory Variables
-Requires the ``[compute]`` host group. This group should contain a list of all the compute nodes in the MOS environment.
-
+## Example
+```
+---
+- hosts: compute
+  roles:
+     - { role: compute_patches }
+     
+```
 ## Dependencies
 
 It does not depend on any other ansible role
