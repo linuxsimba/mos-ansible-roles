@@ -3,6 +3,6 @@
   ignore_errors: yes
   no_log: True
 
-- name: restart  crm lma_collector
+- name: restart crm lma_collector
   command: crm resource restart lma_collector
   no_log: True

@@ -1,5 +1,5 @@
 listen elasticsearch-rest
-  bind {{ ansible_local.vip_public.ip }}:9200
+  bind {{ ansible_local.vip_public.ip }}:{{ elasticsearch_port }}
   balance  roundrobin
   mode  http
   option  httplog
