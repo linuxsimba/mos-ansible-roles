@@ -1,0 +1,7 @@
+- name: update inspector.py on compute nodes. ceilometer bug 1457440
+  copy:
+    src: inspector.py
+    dest: /usr/lib/python2.7/dist-packages/ceilometer/compute/virt/libvirt/inspector.py
+    backup: yes
+  notify: restart ceilometer
+  tags: ['compute_patches']
