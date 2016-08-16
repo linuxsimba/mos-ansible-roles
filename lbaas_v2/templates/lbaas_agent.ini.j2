@@ -1,0 +1,12 @@
+[DEFAULT]
+verbose = {{ lbaas_verbose }}
+debug = {{ lbaas_debug }}
+
+periodic_interval = 10
+
+interface_driver = {{ lbaas_interface_driver }}
+
+[haproxy]
+user_group = nogroup
+
+send_gratuitous_arp = 3

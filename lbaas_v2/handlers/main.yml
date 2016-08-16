@@ -1,0 +1,5 @@
+- name: restart neutron-server
+  service:  name=neutron-server state=restarted
+
+- name: restart neutron-lbaasv2-agent
+  service: name=neutron-lbaasv2-agent state=restarted

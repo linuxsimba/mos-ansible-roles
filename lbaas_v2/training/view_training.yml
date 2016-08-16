@@ -1,0 +1,3 @@
+- name: update horizon db. set enabled_db to true
+  lineinfile:
+    regexp: "

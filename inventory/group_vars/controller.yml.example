@@ -1,0 +1,5 @@
+# Used by lbaas-v2 role
+# service_plugins:
+#  - neutron.services.l3_router.l3_router_plugin.L3RouterPlugin
+#  - neutron.services.metering.metering_plugin.MeteringPlugin
+#  - neutron_lbaas.services.loadbalancer.plugin.LoadBalancerPluginv2

@@ -1,0 +1,19 @@
+# interface driver used in lbaas_agent.ini config
+# Examples:
+# interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
+# interface_driver = neutron.agent.linux.interface.BridgeInterfaceDriver
+#  Default is the OVS driver. Which is the default for MOS
+lbaas_interface_driver: neutron.agent.linux.interface.OVSInterfaceDriver
+
+
+# Set the debug and verbose sesttings in lbaas_agent.init
+lbaas_verbose: False
+lbaas_debug: False
+
+# populate the service_plugins variable in /etc/neutron/neutron.conf
+# Example:
+# service_plugins:
+#  - neutron.services.l3_router.l3_router_plugin.L3RouterPlugin
+#  - neutron.services.metering.metering_plugin.MeteringPlugin
+#  - neutron_lbaas.services.loadbalancer.plugin.LoadBalancerPluginv2
+service_plugins: []

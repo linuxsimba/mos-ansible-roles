@@ -1,0 +1,45 @@
+- fail: msg="service_plugins variable is empty. see lbaas_v2/defaults/main.yml for more details"
+  when: service_plugins == []
+
+- name: install lbaav2 neutron agent
+  apt: name=neutron-lbaasv2-agent
+  register: lbass_install
+
+- name: |
+   add the neutron-lbaas migration if lbaasv2 agent is installed.
+   Seems to produce an error when it executes. Just ignore the error.
+   Only run on a single controller in the clustered env.
+  raw:  "source /root/openrc && neutron-db-manage --service lbaas upgrade head"
+  args:
+    executable: "/bin/bash"
+  register: lbaas_install.changed == True
+  delegate_to: "{{ groups['controller'][0] }}"
+  ignore_errors: yes
+
+- name: update lbaas_agent.ini with correct settings
+  template:
+    src: lbaas_agent.ini.j2
+    dest: /etc/neutron/lbaas_agent.ini
+  notify:
+    - restart neutron-server
+    - restart neutron-lbaasv2-agent
+
+
+- name: update service_plugins in neutron.conf to include lbaas.
+  lineinfile:
+    dest: /etc/neutron/neutron.conf
+    regexp: "^service_plugins"
+    line: "service_plugins =  {{ service_plugins|join(',') }}"
+  notify:
+    - restart neutron-server
+    - restart neutron-lbaasv2-agent
+
+- name: add service_providers section to neutron.conf
+  blockinfile:
+    dest: /etc/neutron/neutron.conf
+    block: |
+      [service_providers]
+      service_provider = LOADBALANCERV2:Haproxy:neutron_lbaas.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default
+  notify:
+    - restart neutron-server
+    - restart neutron-lbaasv2-agent

@@ -1,4 +1,5 @@
 inventory/hosts
+inventory/group_vars/controller.yml
 slack.json
 *.swp
 Session.vim
