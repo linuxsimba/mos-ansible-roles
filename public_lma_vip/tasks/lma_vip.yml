@@ -24,7 +24,7 @@
   delegate_to: "{{item}}"
   with_items: "{{ groups['lma'] }}"
 
-- name: Get the vip__public IP for the openstack cluster.
+- name: Get the vip__infrastructure_alerting_mgmt_vip IP for the openstack cluster.
   setup: filter="ansible_local*"
   delegate_to: "{{ groups['lma'][0] }}"
   delegate_facts: true
