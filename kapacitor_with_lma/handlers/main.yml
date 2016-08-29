@@ -1,0 +1,5 @@
+- name: start kapacitor resource
+  command: 'crm resource start kapacitor'
+
+- name: restart kapacitor resource
+  command: 'crm resource restart kapacitor'

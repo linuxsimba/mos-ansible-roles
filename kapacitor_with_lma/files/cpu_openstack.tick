@@ -1,0 +1,16 @@
+stream
+  .from()
+  .measurement('cpu_idle')
+  .groupBy('hostname')
+  .window()
+    .period(1m)
+    .every(1m)
+  .mapReduce(influxql.mean('value'))
+  .alert()
+    .id(' CPU Alert - {{ index .Tags "hostname" }}
+    .message ('{{ . ID }}. Alert Level is {{ .Level }}.  {{ index .Fields "mean"
+}}% TOTAL CPU LEFT!')
+    .warn(lambda: "mean" < 10)
+    .crit(lambda: "mean" < 5)
+    .stateChangesOnly()
+    .slack()

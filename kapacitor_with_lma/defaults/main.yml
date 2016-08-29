@@ -1,0 +1,19 @@
+# Full name of the kapacitor deb
+# Older version can be found at https://dl.influxdata.com/kapacitor/releases/
+# Reference: https://github.com/influxdata/kapacitor/issues/694
+# defaults to version 0.10, which matches the version of Stacklight 0.9
+kapacitor_deb: kapacitor_0.10.1-1_amd64.deb
+
+# Directory with TickScript files that trigger alerts
+alert_dir: '/etc/kapacitor/alerts'
+
+
+## List of alerts. Make sure there is a TickScript file for each alert listed
+# The tickscript files should be in the files/ folder
+# Example
+# alert_list
+#   - cpu
+#   - disk
+#   - openstack_api
+#   - cluster_status
+alert_list: []

@@ -1,0 +1,73 @@
+- name: copy custom fact for collecting pacemaker cluster DC info
+  copy:
+    src: pcs_cluster_dc.py
+    dest: /etc/ansible/facts.d/pcs_cluster_dc.fact
+    mode: 0755
+    owner: root
+    group: root
+
+- name: get the cluster DC if it is not already available in the setup output
+  setup: filter="ansible_local.*"
+  when: ansible_local.pcs_cluster_dc is not defined
+
+- name: copy kapacitor deb to the /tmp directory
+  copy:
+    src: "{{ kapacitor_deb }}"
+    dest: "/tmp/{{ kapacitor_deb }}"
+
+- name: install kapacitor
+  apt:
+    deb: "/tmp/{{ kapacitor_deb }}"
+  register: kapacitor_installed
+
+# Run a block that executes only on the pacemaker cluster DC
+# These tasks create the Kapacitor Pacemaker Resource
+# The rule is that only one kapacitor instance runs on any of the machines
+# in the cluster. And the kapacitor instance must run on the same node
+# running the VIP called infrastructure_mgmt_vip.
+- block:
+  - name: create kapacitor pcs resource
+    pcs_resource:
+      command: 'create'
+      resource_id: 'kapacitor'
+      type: 'lsb:kapacitor'
+    register: pcs_resource_status
+    notify:
+      - start kapacitor resource
+
+  # MOS configures Cluster with an Opt-In config. So each time you create a new
+  # resource you must state that the resource must run on all nodes in the
+  # cluster.
+  - name: |
+      if the kapacitor resource is created tell pacemaker that
+      kapacitor can run on any host in the LMA cluster
+    command: "pcs constraint location kapacitor prefers {{item}}.{{ansible_domain}}=100"
+    with_items: "{{ groups['lma'] }}"
+    when: pcs_resource_status.changed == True
+
+  - name: make sure that kapacitor resource runs on the same node as the infrastucture mgmt VIP
+    command: "pcs constraint colocation add kapacitor with vip__infrastructure_alerting_mgmt_vip"
+    when: pcs_resource_status.changed == True
+
+  when: ansible_nodename == ansible_local.pcs_cluster_dc.hostname
+
+- name: copy kapacitor config file
+  template:
+    src: kapacitor.conf.j2
+    dest: /etc/kapacitor/kapacitor.conf
+
+- name: create kapacitor alert folder
+  file: path="{{alert_dir}}" state=directory mode=0755 owner=root
+
+
+- name: copy alerts to the kapacitor alert folder
+  copy:
+    src:  "{{item}}.tick"
+    dest: "{{alert_dir}}/{{item}}.tick"
+  with_items: "{{ alert_list }}"
+
+- name: enable each alert
+  command:  "kapacitor define -name {{item}} -type stream -tick {{item}}.tick -dbrp {{dbname}}.{{retention_policy}}"
+
+     kapacitor define -name cluster_status -type stream -tick cluster_status.tick -dbrp "lma"."default"
+
