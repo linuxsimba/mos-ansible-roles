@@ -1,0 +1,19 @@
+// Over a 10 minute period, check the disk usage every 5 minutes
+// If the average percent used over the 10 minute peeriod
+//    is over 95% then send a warning
+// If the average percent used over the 10 minute period, is over 98%
+// then send a critical alert.
+stream
+  .from()
+  .measurement('disk')
+  .groupBy('host')
+  .window()
+    .period(10m)
+    .every(5m)
+  .mapReduce(influxql.mean('used_percent'))
+  .alert()
+    .id('{{ index .Tags "host" }}')
+    .message('Disk alert - {{ .ID }} {{ index .Fields "mean" }}% TOTAL CPU LEFT')
+    .warn(lambda: 100 - "mean" < 5)
+    .crit(lambda: 100 - "mean" < 2)
+    .slack()

@@ -1,0 +1,16 @@
+// check the mean average of the "event" metric.
+// If it is greater than one then it means that that sensor is reporting
+// a problem. Keep on alerting every 5 minutes until the problem is solved.
+stream
+  .from()
+  .measurement('server_env')
+  .groupBy('host', 'sensor_name')
+  .window()
+    .period(5m)
+    .every(5m)
+  .mapReduce(influxql.mean('event'))
+  .alert()
+    .id('{{ index .Tags "host" }}/{{ index .Tags "sensor_name" }} ')
+    .message('Server Environment alert - {{ .ID }} {{ index .Fields "mean" }}% ')
+    .warn(lambda: "mean" > 0)
+    .slack()

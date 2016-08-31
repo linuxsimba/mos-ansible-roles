@@ -1,0 +1,15 @@
+// Check the number of API servers per service (backend) that are down
+// Send a warning if this number is greater than 0.
+// Only send it once as the number increases.
+stream
+  .from()
+  .measurement('haproxy_backend_servers')
+  .where(lambda: "state" == 'down')
+  .groupBy('backend', 'environment_label')
+  .alert()
+    .id('{{ index .Tags "environment_label" }} - {{ index .Tags "backend" }}
+server')
+    .message('{{ .ID }} down count: {{ index .Fields "value" }}')
+    .warn(lambda: "value" > 0)
+    .stateChangesOnly()
+    .slack()

@@ -1,0 +1,17 @@
+// if free disk is less than 90% then warn
+// if free disk is less than 95% then send a critical alert
+stream
+  .from()
+  .measurement('fs_inodes_percent_free')
+  .groupBy('hostname')
+  .window()
+    .period(1m)
+    .every(1m)
+  .mapReduce(influxql.mean('value'))
+  .alert()
+    .id('{{ index .Tags "hostname" }}')
+    .message('Disk Alert - {{ .ID }} {{ index .Fields "mean" }}% TOTAL DISK LEFT')
+    .warn(lambda: "mean" < 10)
+    .crit(lambda: "mean" < 5)
+    .stateChangesOnly()
+    .slack()

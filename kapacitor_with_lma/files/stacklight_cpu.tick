@@ -1,0 +1,18 @@
+// every 5 minute, take the mean of 10 recordings of CPU data.
+// If the CPU is greater than 90%, then warn. If its greater than 95% the send a
+// critical
+stream
+  .from()
+  .measurement('cpu_idle')
+  .groupBy('hostname')
+  .window()
+    .period(5m)
+    .every(1m)
+  .mapReduce(influxql.mean('value'))
+  .alert()
+    .id('{{ index .Tags "hostname" }}')
+    .message('CPU alert - {{ .ID }} {{ index .Fields "mean" }}% TOTAL CPU LEFT')
+    .warn(lambda: "mean" < 10)
+    .crit(lambda: "mean" < 5)
+    .stateChangesOnly()
+    .slack()

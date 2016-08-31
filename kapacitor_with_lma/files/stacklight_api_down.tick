@@ -1,0 +1,17 @@
+// From the StackLight 'openstack_check_api' measurement,
+// alert if a service reports that its API is down.
+// This is pretty bad so send a critical alert
+// Alert it sent out once a minute.
+stream
+  .from()
+  .measurement('openstack_check_api')
+  .groupBy('service', 'environment_label')
+  .window()
+    .period(1m)
+    .every(10s)
+  .alert()
+  .id('openstack_check_api - {{ index .Tags "environment_label" }}')
+  .message('{{ .ID }} - {{ index .Tags "service" }} is {{ if eq .Level "OK" }}
+up {{ else }} down {{ end }}')
+  .crit(lambda: "value" < 1)
+  .slack()

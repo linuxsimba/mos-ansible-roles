@@ -55,19 +55,81 @@
   template:
     src: kapacitor.conf.j2
     dest: /etc/kapacitor/kapacitor.conf
+  notify:
+    - restart kapacitor resource
 
 - name: create kapacitor alert folder
   file: path="{{alert_dir}}" state=directory mode=0755 owner=root
-
 
 - name: copy alerts to the kapacitor alert folder
   copy:
     src:  "{{item}}.tick"
     dest: "{{alert_dir}}/{{item}}.tick"
   with_items: "{{ alert_list }}"
+  register: tick_file
 
-- name: enable each alert
-  command:  "kapacitor define -name {{item}} -type stream -tick {{item}}.tick -dbrp {{dbname}}.{{retention_policy}}"
+- block:
+  - name: stop kapacitor pacemaker resource
+    shell: crm resource stop kapacitor
+    ignore_errors: yes
 
-     kapacitor define -name cluster_status -type stream -tick cluster_status.tick -dbrp "lma"."default"
+  - name: start kapacitor
+    service: name=kapacitor state=started
 
+  - meta: flush_handlers
+
+  - name: give kapacitor a few seconds to start
+    pause: seconds=10
+
+  - command: "kapacitor delete tasks {{ item }}"
+    with_items: "{{ alert_list }}"
+
+  - name: stop kapacitor
+    service: name=kapacitor state=stopped
+    notify:
+      - start kapacitor resource
+
+  - fail:  msg="stop here"
+  when: "delete_tasks is defined"
+
+- block:
+  - name: stop kapacitor pacemaker resource
+    shell: crm resource stop kapacitor
+    ignore_errors: yes
+
+  - name: stop kapacitor process if its running
+    service: name=kapacitor state=stopped
+
+  - name: start kapacitor process
+    service: name=kapacitor state=started
+
+
+  - meta: flush_handlers
+
+  - name: give kapacitor a few seconds to start
+    pause: seconds=10
+
+  - name: define each alert
+    shell:  "kapacitor define -name {{item}} -type stream -tick {{item}}.tick -dbrp {{kapacitor_dbname}}.{{kapacitor_retention_policy}}"
+    args:
+      chdir: "{{ alert_dir}}"
+    with_items: "{{ alert_list }}"
+
+  - name: enable each alert
+    command:  "kapacitor enable {{item}}"
+    with_items: "{{ alert_list }}"
+
+  - name: reload each alert stats
+    command: "kapacitor reload {{item}}"
+    with_items: "{{ alert_list }}"
+
+  - name: stop kapacitor process
+    service: name=kapacitor state=stopped
+
+  - meta: flush_handlers
+
+  - name: restart kapacitor pacemaker resource
+    shell: crm resource start kapacitor
+    ignore_errors: yes
+
+  when: tick_file.changed == True or install_alert is defined

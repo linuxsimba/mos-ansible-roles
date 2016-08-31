@@ -1,5 +1,7 @@
 - name: start kapacitor resource
-  command: 'crm resource start kapacitor'
+  shell: 'crm resource start kapacitor'
+  ignore_errors: yes
 
 - name: restart kapacitor resource
-  command: 'crm resource restart kapacitor'
+  shell: 'crm resource restart kapacitor'
+  ignore_errors: yes

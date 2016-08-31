@@ -1,0 +1,20 @@
+// For foundation nodes and switches that use telegraf
+// During a 5 minute interval, take the mean total cpu idle time.
+// if the mean is less than 10% then send a warning
+// if the mean is less than 5% then send a critical alert
+stream
+  .from()
+  .measurement('cpu')
+  .where(lambda: "cpu" == 'cpu-total')
+  .groupBy('host')
+  .window()
+    .period(5m)
+    .every(1m)
+  .mapReduce(influxql.mean('usage_idle'))
+  .alert()
+    .id('{{ index .Tags "host" }}')
+    .message('CPU alert - {{ .ID }} {{ index .Fields "mean" }}% TOTAL CPU LEFT')
+    .warn(lambda: "mean" < 10)
+    .crit(lambda: "mean" < 5)
+    .stateChangesOnly()
+    .slack()
