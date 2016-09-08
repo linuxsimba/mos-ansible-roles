@@ -6,7 +6,7 @@ stream
   .from()
   .measurement('openstack_check_api')
   .groupBy('service', 'environment_label')
-  .where(lambda: "service" !~ /(swift-api|swift-s3-api/)/)
+  .where(lambda: "service" !~ /(swift-api|swift-s3-api)/)
   .window()
     .period(1m)
     .every(10s)

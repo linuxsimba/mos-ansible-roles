@@ -12,7 +12,7 @@ stream
   .alert()
     .id('{{ index .Tags "hostname" }}')
     .message('CPU alert - {{ .ID }} {{ index .Fields "mean" }}% TOTAL CPU LEFT')
-    .warn(lambda: "mean" < 10)
     .crit(lambda: "mean" < 5)
+    .warn(lambda: "mean" < 10)
     .stateChangesOnly()
     .slack()

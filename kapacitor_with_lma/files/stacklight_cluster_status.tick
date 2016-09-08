@@ -5,7 +5,7 @@ stream
   .measurement('cluster_status')
   .groupBy('cluster_name', 'environment_label')
   .alert()
-  .id('cluster_status - {{ index. Tags "environment_label" }} - {{ index .Tags "cluster_name" }}')
+  .id('cluster_status - {{ index .Tags "environment_label" }} - {{ index .Tags "cluster_name" }}')
   .message('{{ .ID }} is {{ if eq .Level "OK" }} OK {{ else if eq .Level "WARN" }} Warn/Unknown {{ else }} Critical/Down {{ end }}')
   .warn(lambda: "value" > 0)
   .crit(lambda: "value" > 2)

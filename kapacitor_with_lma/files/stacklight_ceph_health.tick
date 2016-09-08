@@ -5,11 +5,10 @@ stream
   .measurement('ceph_health')
   .groupBy('hostname')
   .alert()
-  .id('ceph_health - {{ index. Tags "hostname" }} ')
-  .message('{{ .ID }} {{ if eq .Level "OK" }} is OK {{ else if eq .Level "WARN"
-}} WARN - Check Ceph Grafana Dashboard for more details.{{ else }} ERROR - Check
-Ceph Grafana Dashboard for more details. {{ end }}')
-  .warn(lambda: "value" > 1)
+  .id('ceph_health - {{ index .Tags "hostname" }} ')
+  .message('{{ .ID }} {{ if eq .Level "OK" }} is OK {{ else if eq .Level "WARN" }} WARN - Check Ceph Grafana Dashboard for more details.{{ else }} ERROR - Check Ceph Grafana Dashboard for more details. {{ end }}')
   .crit(lambda: "value" > 2)
+  .warn(lambda: "value" > 1)
   .stateChangesOnly()
   .slack()
+

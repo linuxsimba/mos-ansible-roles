@@ -11,7 +11,7 @@ stream
   .alert()
     .id('{{ index .Tags "hostname" }}')
     .message('Disk Alert - {{ .ID }} {{ index .Fields "mean" }}% TOTAL DISK LEFT')
-    .warn(lambda: "mean" < 10)
     .crit(lambda: "mean" < 5)
+    .warn(lambda: "mean" < 10)
     .stateChangesOnly()
     .slack()
