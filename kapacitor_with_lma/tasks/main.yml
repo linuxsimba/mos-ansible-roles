@@ -92,22 +92,23 @@
   - fail:  msg="stop here"
   when: "delete_tasks is defined"
 
+- name: check influxdb
+  command: service influxdb status
+  register: influxdb_status
+  ignore_errors: yes
+
 - block:
   - name: stop kapacitor pacemaker resource
     shell: crm resource stop kapacitor
     ignore_errors: yes
+    delegate_to: "{{ groups['lma'][0] }}"
 
-  - name: stop kapacitor process if its running
-    service: name=kapacitor state=stopped
+
+  - name: give kapacitor resource a few seconds to stop
+    pause: seconds=10
 
   - name: start kapacitor process
     service: name=kapacitor state=started
-
-
-  - meta: flush_handlers
-
-  - name: give kapacitor a few seconds to start
-    pause: seconds=10
 
   - name: define each alert
     shell:  "kapacitor define -name {{item}} -type stream -tick {{item}}.tick -dbrp {{kapacitor_dbname}}.{{kapacitor_retention_policy}}"
@@ -126,10 +127,9 @@
   - name: stop kapacitor process
     service: name=kapacitor state=stopped
 
-  - meta: flush_handlers
-
   - name: restart kapacitor pacemaker resource
     shell: crm resource start kapacitor
     ignore_errors: yes
+    delegate_to: "{{ groups['lma'][0] }}"
 
-  when: tick_file.changed == True or install_alert is defined
+  when: (influxdb_status.rc == 0) and (tick_file.changed == True or install_alert is defined)
