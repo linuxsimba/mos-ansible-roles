@@ -1,0 +1,13 @@
+// From the stacklight 'cluster_status' metric
+// alert when the cluster_name status is not zero.
+stream
+  .from()
+  .measurement('cluster_status')
+  .groupBy('cluster_name', 'environment_label')
+  .alert()
+  .id('cluster_status - {{ index. Tags "environment_label" }} - {{ index .Tags "cluster_name" }}')
+  .message('{{ .ID }} is {{ if eq .Level "OK" }} OK {{ else if eq .Level "WARN" }} Warn/Unknown {{ else }} Critical/Down {{ end }}')
+  .warn(lambda: "value" > 0)
+  .crit(lambda: "value" > 2)
+  .stateChangesOnly()
+  .slack()

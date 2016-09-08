@@ -26,6 +26,9 @@ alert_list:
   - stacklight_disk
   - stacklight_api_server_count
   - stacklight_api_down
+  - stacklight_server_down
+  - stacklight_cluster_status
+  - stacklight_ceph_health
   - telegraf_cpu
   - telegraf_disk
   - telegraf_server_env_failure
