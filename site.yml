@@ -12,3 +12,8 @@
 - hosts: compute
   roles:
     - { role: compute_patches }
+
+- hosts: all
+  roles:
+    - { role: shutdown_ceilometer, tags: 'shut_ceil' }
+
