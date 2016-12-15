@@ -1,14 +1,17 @@
 // From the stacklight 'ceph_health' metric
 // alert when value is greater than 1.
+// alert every 10 minutes.
 stream
   .from()
   .measurement('ceph_health')
   .groupBy('hostname')
+  .window()
+    .period(10m)
+    .every(10m)
   .alert()
   .id('ceph_health - {{ index .Tags "hostname" }} ')
   .message('{{ .ID }} {{ if eq .Level "OK" }} is OK {{ else if eq .Level "WARNING" }} WARN - Check Ceph Grafana Dashboard for more details.{{ else }} ERROR - Check Ceph Grafana Dashboard for more details. {{ end }}')
   .crit(lambda: "value" > 2)
   .warn(lambda: "value" > 1)
-  .stateChangesOnly()
   .slack()
 

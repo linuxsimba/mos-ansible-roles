@@ -1,13 +1,17 @@
 // From the stacklight 'cluster_status' metric
 // alert when the cluster_name status is not zero.
+// alert every 10 minutes
 stream
   .from()
   .measurement('cluster_status')
   .groupBy('cluster_name', 'environment_label')
+  .where(lambda: "cluster_name" !~ /(influxdb)/)
+  .window()
+    .period(10m)
+    .every(10m)
   .alert()
   .id('cluster_status - {{ index .Tags "environment_label" }} - {{ index .Tags "cluster_name" }}')
   .message('{{ .ID }} is {{ if eq .Level "OK" }} OK {{ else if eq .Level "WARNING" }} Warn/Unknown {{ else }} Critical/Down {{ end }}')
   .warn(lambda: "value" > 0)
   .crit(lambda: "value" > 2)
-  .stateChangesOnly()
   .slack()

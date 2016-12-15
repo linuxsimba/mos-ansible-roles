@@ -1,0 +1,18 @@
+kapacitor_influxdb_enabled: true
+kapacitor_http_bind_address: ":9092"
+kapacitor_hostname: "localhost"
+kapacitor_dbname: 'lma'
+kapacitory_retention_policy: 'default'
+kapacitor_influxdb_urls:
+  - "http://{{ ansible_br_mgmt.ipv4.address }}:8086"
+kapacitor_influxdb_subscriptions:
+  - { name: lma, rps: ['default'] }
+kapacitor_influxdb_username: root
+kapacitor_influxdb_password: "Pr3sal3sL@b"
+kapacitor_slack_enabled: "true"
+kapacitor_slack_url:  "https://hooks.slack.com/services/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"
+kapacitor_slack_channel: "#se-lab-alerts"
+kapacitor_stats_enabled: "true"
+kapacitor_stats_interval: "60s"
+kapacitor_stats_database: "_kapacitor"
+kapacitor_retention_policy: "default"
