@@ -1,7 +1,7 @@
 ---
 - hosts: controller
   roles:
-    - { role: public_lma_vip }
+    - { role: public_lma_vip , tags: 'public_vip' }
     - { role: lbaas_v2, tags: 'lbaas'}
 
 - hosts: lma

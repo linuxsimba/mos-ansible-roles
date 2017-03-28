@@ -29,7 +29,6 @@ alert_list:
   - stacklight_cluster_status
   - stacklight_ceph_health
   - telegraf_cpu
-  - telegraf_disk
   - telegraf_server_env_failure
 
 # The rest of this config is from the rossmcdonald.kapacitor role

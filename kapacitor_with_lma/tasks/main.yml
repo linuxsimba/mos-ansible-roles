@@ -97,6 +97,15 @@
   register: influxdb_status
   ignore_errors: yes
 
+- name: install restart kapacitor crontab file
+  copy: src=restart_kapacitor.sh dest=/usr/local/bin/restart_kapacitor mode=0750
+
+- name: insert crontab to restart kapacitor when it fails
+  cron:
+    name: "restart kapacitor"
+    minute: "*/10"
+    job: "/usr/local/bin/restart_kapacitor"
+
 - block:
   - name: stop kapacitor pacemaker resource
     shell: crm resource stop kapacitor
